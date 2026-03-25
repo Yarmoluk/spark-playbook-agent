@@ -1,0 +1,926 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SPARK Agent — Summit Integration Specification</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: "Monaco", "Courier New", monospace;
+            background: #1e1e1e;
+            color: #e0e0e0;
+            line-height: 1.6;
+            padding: 40px 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 50px;
+            border-bottom: 2px solid #00d4ff;
+            padding-bottom: 30px;
+        }
+
+        h1 {
+            font-size: 2em;
+            color: #00d4ff;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .subtitle {
+            font-size: 0.95em;
+            color: #b0b0b0;
+            margin-top: 10px;
+        }
+
+        h2 {
+            color: #00ff88;
+            margin-top: 40px;
+            margin-bottom: 20px;
+            border-bottom: 1px solid #00d4ff;
+            padding-bottom: 10px;
+            font-size: 1.5em;
+        }
+
+        h3 {
+            color: #ffaa00;
+            margin-top: 25px;
+            margin-bottom: 15px;
+            font-size: 1.15em;
+        }
+
+        h4 {
+            color: #00d4ff;
+            margin-top: 15px;
+            margin-bottom: 10px;
+            font-size: 1em;
+        }
+
+        code {
+            background: #0f3460;
+            border: 1px solid #00d4ff;
+            padding: 2px 6px;
+            border-radius: 3px;
+            color: #00ff88;
+            font-size: 0.9em;
+        }
+
+        .code-block {
+            background: #0f3460;
+            border: 1px solid #00d4ff;
+            border-radius: 6px;
+            padding: 20px;
+            margin: 15px 0;
+            overflow-x: auto;
+            color: #00ff88;
+            font-size: 0.9em;
+            line-height: 1.4;
+        }
+
+        .api-endpoint {
+            background: #162b45;
+            border-left: 4px solid #00ff88;
+            padding: 20px;
+            margin: 15px 0;
+            border-radius: 6px;
+        }
+
+        .method {
+            display: inline-block;
+            background: #00ff88;
+            color: #0f3460;
+            padding: 4px 10px;
+            border-radius: 3px;
+            font-weight: bold;
+            font-size: 0.85em;
+            margin-right: 10px;
+        }
+
+        .method.post {
+            background: #ffaa00;
+        }
+
+        .method.get {
+            background: #00d4ff;
+        }
+
+        .method.put {
+            background: #ff0055;
+        }
+
+        .path {
+            color: #00d4ff;
+            font-family: "Monaco", monospace;
+            margin: 10px 0;
+        }
+
+        .param-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+            background: #0f3460;
+        }
+
+        .param-table th {
+            background: #162b45;
+            color: #00d4ff;
+            padding: 12px;
+            text-align: left;
+            border-bottom: 2px solid #00d4ff;
+        }
+
+        .param-table td {
+            padding: 12px;
+            border-bottom: 1px solid #00d4ff;
+            color: #d0d0d0;
+        }
+
+        .param-table tr:hover {
+            background: #1a3d5c;
+        }
+
+        .param-required {
+            color: #ff0055;
+            font-weight: bold;
+        }
+
+        .data-model {
+            background: #162b45;
+            border: 1px solid #00d4ff;
+            border-radius: 6px;
+            padding: 20px;
+            margin: 15px 0;
+        }
+
+        .field {
+            display: grid;
+            grid-template-columns: 150px 100px 1fr;
+            gap: 15px;
+            padding: 10px 0;
+            border-bottom: 1px solid #00d4ff;
+        }
+
+        .field:last-child {
+            border-bottom: none;
+        }
+
+        .field-name {
+            color: #00d4ff;
+            font-family: "Monaco", monospace;
+            font-weight: bold;
+        }
+
+        .field-type {
+            color: #00ff88;
+            font-family: "Monaco", monospace;
+        }
+
+        .field-desc {
+            color: #c0c0c0;
+            font-size: 0.9em;
+        }
+
+        .workflow-step {
+            background: #0f3460;
+            border-left: 4px solid #ffaa00;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 6px;
+        }
+
+        .workflow-step.trigger {
+            border-left-color: #00ff88;
+        }
+
+        .workflow-step.process {
+            border-left-color: #00d4ff;
+        }
+
+        .workflow-step.output {
+            border-left-color: #ff0055;
+        }
+
+        ul {
+            margin-left: 20px;
+            margin-top: 10px;
+        }
+
+        li {
+            margin-bottom: 8px;
+            color: #d0d0d0;
+        }
+
+        .note {
+            background: #162b45;
+            border-left: 4px solid #ffaa00;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 6px;
+            color: #d0d0d0;
+        }
+
+        .warning {
+            background: #3a2a1a;
+            border-left: 4px solid #ff0055;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 6px;
+            color: #ffb0b0;
+        }
+
+        .checklist {
+            list-style: none;
+            padding: 0;
+        }
+
+        .checklist li {
+            padding: 8px 0;
+            padding-left: 25px;
+            position: relative;
+        }
+
+        .checklist li:before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            color: #00ff88;
+            font-weight: bold;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+            background: #0f3460;
+        }
+
+        th {
+            background: #162b45;
+            color: #00d4ff;
+            padding: 12px;
+            text-align: left;
+            border-bottom: 2px solid #00d4ff;
+        }
+
+        td {
+            padding: 12px;
+            border-bottom: 1px solid #00d4ff;
+        }
+
+        tr:hover {
+            background: #1a3d5c;
+        }
+
+        footer {
+            text-align: center;
+            color: #707070;
+            margin-top: 60px;
+            padding-top: 30px;
+            border-top: 1px solid #00d4ff;
+            font-size: 0.9em;
+        }
+
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin: 15px 0;
+        }
+
+        .box {
+            background: #0f3460;
+            border: 1px solid #00d4ff;
+            border-radius: 6px;
+            padding: 15px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🔗 SPARK Agent Summit Integration</h1>
+            <p class="subtitle">Technical Specification for Summit Platform Team</p>
+            <p class="subtitle">API Contract • Data Models • Integration Patterns • Deployment</p>
+        </header>
+
+        <h2>📋 Overview</h2>
+        <p>This spec defines how the SPARK playbook agent integrates with Slalom's Summit knowledge platform to:</p>
+        <ul>
+            <li>Search and retrieve playbook templates, methodologies, accelerators</li>
+            <li>Index engagement context and constraint parameters</li>
+            <li>Query patterns and delivery models with trade-off metadata</li>
+            <li>Store generated playbooks and source attribution logs</li>
+            <li>Expose agent status and output bundle via REST API</li>
+        </ul>
+
+        <h2>🏗️ System Architecture</h2>
+        <div class="grid-2">
+            <div class="box">
+                <h4>Summit Layer</h4>
+                <p>Asset indexing, search API, metadata store, version control</p>
+            </div>
+            <div class="box">
+                <h4>Claude Agent Layer</h4>
+                <p>Orchestration, synthesis, composition, quality gates</p>
+            </div>
+        </div>
+        <div class="grid-2">
+            <div class="box">
+                <h4>Storage Layer</h4>
+                <p>Playbook bundles, patterns, source logs, template library</p>
+            </div>
+            <div class="box">
+                <h4>API Layer</h4>
+                <p>Trigger endpoints, status polling, output retrieval, webhooks</p>
+            </div>
+        </div>
+
+        <h2>🔌 Core API Contracts</h2>
+
+        <h3>1. Trigger Playbook Generation</h3>
+        <div class="api-endpoint">
+            <span class="method post">POST</span>
+            <span class="path">/v1/spark/playbooks/generate</span>
+            <p style="margin-top: 10px; color: #c0c0c0;">Trigger agent to assemble a new playbook from engagement context.</p>
+        </div>
+
+        <h4>Request Body</h4>
+        <div class="code-block">
+{
+  "engagement_id": "ENG-2026-001",
+  "client_name": "Canadian Agency XYZ",
+  "vertical": "cloud-transformation",
+  "scope": {
+    "services": ["migration", "modernization", "training"],
+    "systems": 8,
+    "users": 250,
+    "locations": 3
+  },
+  "constraints": {
+    "timeline_months": 12,
+    "budget_usd": 500000,
+    "risk_tolerance": "medium",
+    "regulatory": ["PIPEDA", "SOC2"]
+  },
+  "stakeholders": [
+    { "name": "John Sponsor", "role": "CIO", "email": "john@agency.ca" }
+  ],
+  "tags": ["government", "cloud", "legacy-migration"],
+  "preferred_patterns": ["phased", "agile"],
+  "exclude_assets": ["internal_pricing"]
+}
+        </div>
+
+        <h4>Request Parameters</h4>
+        <table class="param-table">
+            <tr>
+                <th>Field</th>
+                <th>Type</th>
+                <th>Required</th>
+                <th>Description</th>
+            </tr>
+            <tr>
+                <td><code>engagement_id</code></td>
+                <td>string</td>
+                <td><span class="param-required">Yes</span></td>
+                <td>Unique engagement identifier for tracking & audit</td>
+            </tr>
+            <tr>
+                <td><code>client_name</code></td>
+                <td>string</td>
+                <td><span class="param-required">Yes</span></td>
+                <td>Client organization name</td>
+            </tr>
+            <tr>
+                <td><code>vertical</code></td>
+                <td>enum</td>
+                <td><span class="param-required">Yes</span></td>
+                <td>cloud-transformation | data-modernization | ai-adoption | security | other</td>
+            </tr>
+            <tr>
+                <td><code>scope</code></td>
+                <td>object</td>
+                <td><span class="param-required">Yes</span></td>
+                <td>Engagement scope details (services, scale, geography)</td>
+            </tr>
+            <tr>
+                <td><code>constraints</code></td>
+                <td>object</td>
+                <td><span class="param-required">Yes</span></td>
+                <td>Timeline, budget, risk, compliance requirements</td>
+            </tr>
+            <tr>
+                <td><code>stakeholders</code></td>
+                <td>array</td>
+                <td>No</td>
+                <td>Key contacts for approval & sign-off</td>
+            </tr>
+            <tr>
+                <td><code>tags</code></td>
+                <td>array</td>
+                <td>No</td>
+                <td>Keywords for asset search filtering</td>
+            </tr>
+            <tr>
+                <td><code>preferred_patterns</code></td>
+                <td>array</td>
+                <td>No</td>
+                <td>Preferred delivery models to prioritize</td>
+            </tr>
+            <tr>
+                <td><code>exclude_assets</code></td>
+                <td>array</td>
+                <td>No</td>
+                <td>Asset tags to exclude (e.g., internal pricing)</td>
+            </tr>
+        </table>
+
+        <h4>Response</h4>
+        <div class="code-block">
+{
+  "job_id": "JOB-aea8f2c9-4d1e-4a9f-8e2d-5c3b1a9d7e4f",
+  "engagement_id": "ENG-2026-001",
+  "status": "queued",
+  "created_at": "2026-03-25T14:30:00Z",
+  "estimated_completion": "2026-03-25T16:30:00Z",
+  "status_url": "https://summit.api/v1/spark/jobs/JOB-aea8f2c9-4d1e-4a9f-8e2d-5c3b1a9d7e4f"
+}
+        </div>
+
+        <h3>2. Poll Job Status</h3>
+        <div class="api-endpoint">
+            <span class="method get">GET</span>
+            <span class="path">/v1/spark/jobs/{job_id}</span>
+            <p style="margin-top: 10px; color: #c0c0c0;">Poll agent job status and retrieve intermediate artifacts.</p>
+        </div>
+
+        <h4>Response (In Progress)</h4>
+        <div class="code-block">
+{
+  "job_id": "JOB-aea8f2c9-4d1e-4a9f-8e2d-5c3b1a9d7e4f",
+  "status": "processing",
+  "progress": {
+    "stage": "synthesis",
+    "stage_progress": "65%",
+    "completed_stages": [
+      "retrieval",
+      "constraint_mapping"
+    ],
+    "current_stage": "pattern_synthesis"
+  },
+  "artifacts": {
+    "source_log": "https://summit.api/v1/spark/jobs/JOB-xxx/artifacts/source-log.json",
+    "pattern_comparison": null
+  }
+}
+        </div>
+
+        <h4>Response (Complete)</h4>
+        <div class="code-block">
+{
+  "job_id": "JOB-aea8f2c9-4d1e-4a9f-8e2d-5c3b1a9d7e4f",
+  "status": "complete",
+  "completed_at": "2026-03-25T16:28:15Z",
+  "duration_seconds": 7695,
+  "output_bundle": {
+    "playbook_html": "https://summit.api/v1/spark/jobs/JOB-xxx/artifacts/playbook.html",
+    "playbook_docx": "https://summit.api/v1/spark/jobs/JOB-xxx/artifacts/playbook.docx",
+    "pattern_comparison": "https://summit.api/v1/spark/jobs/JOB-xxx/artifacts/pattern-comparison.json",
+    "alignment_deck": "https://summit.api/v1/spark/jobs/JOB-xxx/artifacts/alignment-deck.pptx",
+    "source_attribution": "https://summit.api/v1/spark/jobs/JOB-xxx/artifacts/source-log.json",
+    "quality_checklist": "https://summit.api/v1/spark/jobs/JOB-xxx/artifacts/quality-checklist.json"
+  },
+  "quality_gate_result": "passed",
+  "summary": {
+    "playbook_pages": 28,
+    "patterns_evaluated": 4,
+    "recommended_pattern": "phased",
+    "assets_sourced": 23,
+    "assumptions_documented": 12,
+    "risks_identified": 8
+  }
+}
+        </div>
+
+        <h3>3. Retrieve Output Bundle</h3>
+        <div class="api-endpoint">
+            <span class="method get">GET</span>
+            <span class="path">/v1/spark/jobs/{job_id}/artifacts/{artifact_type}</span>
+            <p style="margin-top: 10px; color: #c0c0c0;">Download specific artifact from completed job.</p>
+        </div>
+
+        <h4>Supported Artifact Types</h4>
+        <table>
+            <tr>
+                <th>Type</th>
+                <th>Format</th>
+                <th>Description</th>
+            </tr>
+            <tr>
+                <td><code>playbook</code></td>
+                <td>HTML, DOCX</td>
+                <td>Client-ready playbook with all sections</td>
+            </tr>
+            <tr>
+                <td><code>pattern_comparison</code></td>
+                <td>JSON, HTML</td>
+                <td>Trade-off analysis matrix</td>
+            </tr>
+            <tr>
+                <td><code>alignment_deck</code></td>
+                <td>PPTX, PDF</td>
+                <td>Sponsor presentation</td>
+            </tr>
+            <tr>
+                <td><code>source_attribution</code></td>
+                <td>JSON</td>
+                <td>Complete source log with links</td>
+            </tr>
+            <tr>
+                <td><code>quality_checklist</code></td>
+                <td>JSON</td>
+                <td>10-point quality gate results</td>
+            </tr>
+        </table>
+
+        <h2>📊 Data Models</h2>
+
+        <h3>Pattern Model</h3>
+        <div class="data-model">
+            <div class="field">
+                <span class="field-name">pattern_id</span>
+                <span class="field-type">string</span>
+                <span class="field-desc">Unique pattern identifier (phased, agile, hybrid, scaled)</span>
+            </div>
+            <div class="field">
+                <span class="field-name">name</span>
+                <span class="field-type">string</span>
+                <span class="field-desc">Human-readable pattern name</span>
+            </div>
+            <div class="field">
+                <span class="field-name">description</span>
+                <span class="field-type">string</span>
+                <span class="field-desc">Pattern overview & use cases</span>
+            </div>
+            <div class="field">
+                <span class="field-name">phases</span>
+                <span class="field-type">array[Phase]</span>
+                <span class="field-desc">Delivery phases with milestones & activities</span>
+            </div>
+            <div class="field">
+                <span class="field-name">roles</span>
+                <span class="field-type">array[Role]</span>
+                <span class="field-desc">Required team roles & responsibilities</span>
+            </div>
+            <div class="field">
+                <span class="field-name">trade_offs</span>
+                <span class="field-type">TradeOffMatrix</span>
+                <span class="field-desc">Scope/time/margin/risk impact</span>
+            </div>
+            <div class="field">
+                <span class="field-name">risks</span>
+                <span class="field-type">array[Risk]</span>
+                <span class="field-desc">Common risks & mitigations</span>
+            </div>
+            <div class="field">
+                <span class="field-name">success_criteria</span>
+                <span class="field-type">array[Criteria]</span>
+                <span class="field-desc">Measurable success metrics</span>
+            </div>
+            <div class="field">
+                <span class="field-name">suitability_matrix</span>
+                <span class="field-type">object</span>
+                <span class="field-desc">Scoring for vertical, scale, budget, risk tolerance</span>
+            </div>
+        </div>
+
+        <h3>Asset Model (Summit Index)</h3>
+        <div class="data-model">
+            <div class="field">
+                <span class="field-name">asset_id</span>
+                <span class="field-type">string</span>
+                <span class="field-desc">Unique asset identifier</span>
+            </div>
+            <div class="field">
+                <span class="field-name">type</span>
+                <span class="field-type">enum</span>
+                <span class="field-desc">methodology | accelerator | template | case_study | research</span>
+            </div>
+            <div class="field">
+                <span class="field-name">title</span>
+                <span class="field-type">string</span>
+                <span class="field-desc">Asset title / display name</span>
+            </div>
+            <div class="field">
+                <span class="field-name">summary</span>
+                <span class="field-type">string</span>
+                <span class="field-desc">100–200 word overview</span>
+            </div>
+            <div class="field">
+                <span class="field-name">tags</span>
+                <span class="field-type">array[string]</span>
+                <span class="field-desc">Keywords for discovery (vertical, method, pattern)</span>
+            </div>
+            <div class="field">
+                <span class="field-name">url</span>
+                <span class="field-type">string</span>
+                <span class="field-desc">Summit link or external reference</span>
+            </div>
+            <div class="field">
+                <span class="field-name">source</span>
+                <span class="field-type">object</span>
+                <span class="field-desc">Author, date, version, license</span>
+            </div>
+            <div class="field">
+                <span class="field-name">verticals</span>
+                <span class="field-type">array[string]</span>
+                <span class="field-desc">Applicable industries / practices</span>
+            </div>
+            <div class="field">
+                <span class="field-name">reusability</span>
+                <span class="field-type">enum</span>
+                <span class="field-desc">public | internal | restricted | client_specific</span>
+            </div>
+        </div>
+
+        <h3>Source Attribution Model</h3>
+        <div class="data-model">
+            <div class="field">
+                <span class="field-name">attribution_id</span>
+                <span class="field-type">string</span>
+                <span class="field-desc">Unique attribution entry ID</span>
+            </div>
+            <div class="field">
+                <span class="field-name">playbook_section</span>
+                <span class="field-type">string</span>
+                <span class="field-desc">Section in playbook where content is used</span>
+            </div>
+            <div class="field">
+                <span class="field-name">source_asset_id</span>
+                <span class="field-type">string</span>
+                <span class="field-desc">Reference to original Summit asset</span>
+            </div>
+            <div class="field">
+                <span class="field-name">source_url</span>
+                <span class="field-type">string</span>
+                <span class="field-desc">Direct link to source (Summit or external)</span>
+            </div>
+            <div class="field">
+                <span class="field-name">content_excerpt</span>
+                <span class="field-type">string</span>
+                <span class="field-desc">Short quote or paraphrase showing reuse</span>
+            </div>
+            <div class="field">
+                <span class="field-name">reuse_type</span>
+                <span class="field-type">enum</span>
+                <span class="field-desc">quoted | paraphrased | adapted | inspired</span>
+            </div>
+            <div class="field">
+                <span class="field-name">permissions</span>
+                <span class="field-type">object</span>
+                <span class="field-desc">Reuse license, date, approver</span>
+            </div>
+        </div>
+
+        <h2>🔄 Integration Workflow</h2>
+
+        <h3>Summit Search & Asset Retrieval</h3>
+        <div class="workflow-step trigger">
+            <strong>1. Agent Receives Engagement Context</strong><br/>
+            Job triggered with client vertical, scope, constraints, tags
+        </div>
+        <div class="workflow-step process">
+            <strong>2. Execute Parallel Searches</strong><br/>
+            Summit API queries:<br/>
+            • <code>GET /v1/assets/search?type=methodology&tag=cloud-transformation</code><br/>
+            • <code>GET /v1/assets/search?type=template&tag=phased-delivery</code><br/>
+            • <code>GET /v1/patterns?vertical=cloud-transformation&complexity=medium</code>
+        </div>
+        <div class="workflow-step process">
+            <strong>3. Index Results with Metadata</strong><br/>
+            Store asset IDs, URLs, summaries, source info in agent memory
+        </div>
+        <div class="workflow-step process">
+            <strong>4. Constraint Matching</strong><br/>
+            Score each pattern against scope, timeline, budget, risk tolerance
+        </div>
+        <div class="workflow-step process">
+            <strong>5. Synthesize Playbook</strong><br/>
+            Assemble playbook from selected pattern + sourced content
+        </div>
+        <div class="workflow-step output">
+            <strong>6. Store Output Bundle</strong><br/>
+            Save playbook, comparison matrix, alignment deck, source log to Summit
+        </div>
+
+        <h3>Summit Asset Indexing (Setup)</h3>
+        <div class="api-endpoint">
+            <span class="method post">POST</span>
+            <span class="path">/v1/assets/index</span>
+            <p style="margin-top: 10px; color: #c0c0c0;">Index a new playbook template, methodology, or accelerator into Summit.</p>
+        </div>
+        <div class="code-block">
+{
+  "type": "methodology",
+  "title": "Cloud Transformation Phased Delivery Model",
+  "summary": "5-phase cloud migration methodology emphasizing risk mitigation...",
+  "tags": ["cloud", "migration", "phased", "legacy"],
+  "url": "https://summit.slalom.com/content/cloud-phased-model-v2",
+  "source": {
+    "author": "Slalom Cloud Practice",
+    "date": "2026-01-15",
+    "version": "2.1",
+    "license": "internal"
+  },
+  "verticals": ["financial-services", "healthcare", "government", "retail"],
+  "reusability": "internal",
+  "pattern_id": "phased"
+}
+        </div>
+
+        <h2>💾 Storage Schema</h2>
+
+        <h3>Playbook Jobs Table</h3>
+        <table>
+            <tr>
+                <th>Column</th>
+                <th>Type</th>
+                <th>Purpose</th>
+            </tr>
+            <tr>
+                <td><code>job_id</code></td>
+                <td>UUID</td>
+                <td>Primary key</td>
+            </tr>
+            <tr>
+                <td><code>engagement_id</code></td>
+                <td>string</td>
+                <td>Link to engagement system</td>
+            </tr>
+            <tr>
+                <td><code>status</code></td>
+                <td>enum</td>
+                <td>queued | processing | complete | error</td>
+            </tr>
+            <tr>
+                <td><code>input_params</code></td>
+                <td>JSON</td>
+                <td>Request body snapshot</td>
+            </tr>
+            <tr>
+                <td><code>recommended_pattern</code></td>
+                <td>string</td>
+                <td>Pattern ID selected by agent</td>
+            </tr>
+            <tr>
+                <td><code>artifact_urls</code></td>
+                <td>JSON</td>
+                <td>Links to playbook, deck, source log</td>
+            </tr>
+            <tr>
+                <td><code>quality_gate_passed</code></td>
+                <td>boolean</td>
+                <td>True if all 10 checks passed</td>
+            </tr>
+            <tr>
+                <td><code>created_at</code></td>
+                <td>timestamp</td>
+                <td>Job creation time</td>
+            </tr>
+            <tr>
+                <td><code>completed_at</code></td>
+                <td>timestamp</td>
+                <td>Job completion time</td>
+            </tr>
+        </table>
+
+        <h3>Source Attribution Table</h3>
+        <table>
+            <tr>
+                <th>Column</th>
+                <th>Type</th>
+                <th>Purpose</th>
+            </tr>
+            <tr>
+                <td><code>attribution_id</code></td>
+                <td>UUID</td>
+                <td>Primary key</td>
+            </tr>
+            <tr>
+                <td><code>job_id</code></td>
+                <td>UUID</td>
+                <td>Foreign key to playbook job</td>
+            </tr>
+            <tr>
+                <td><code>section</code></td>
+                <td>string</td>
+                <td>Playbook section (e.g., "Phase 1: Assessment")</td>
+            </tr>
+            <tr>
+                <td><code>asset_id</code></td>
+                <td>string</td>
+                <td>Summit asset ID or external source</td>
+            </tr>
+            <tr>
+                <td><code>source_url</code></td>
+                <td>string</td>
+                <td>Direct link</td>
+            </tr>
+            <tr>
+                <td><code>reuse_type</code></td>
+                <td>enum</td>
+                <td>quoted | paraphrased | adapted</td>
+            </tr>
+            <tr>
+                <td><code>excerpt</code></td>
+                <td>text</td>
+                <td>Proof of citation</td>
+            </tr>
+        </table>
+
+        <h2>🧪 Integration Testing Checklist</h2>
+        <ul class="checklist">
+            <li>Summit API connectivity test (search, retrieve, index)</li>
+            <li>Pattern scoring algorithm validation (constraint matching)</li>
+            <li>Playbook assembly completeness (all sections populated)</li>
+            <li>Source attribution accuracy (100% of content has source)</li>
+            <li>Quality gate execution (10 checks pass/fail correctly)</li>
+            <li>Output bundle generation (all 6 artifacts created)</li>
+            <li>Concurrent job handling (multiple jobs simultaneously)</li>
+            <li>Error handling (graceful fallbacks, clear error messages)</li>
+            <li>Performance benchmark (2–6 hour SLA validation)</li>
+            <li>Load testing (10+ simultaneous jobs)</li>
+        </ul>
+
+        <h2>⚠️ Implementation Notes</h2>
+
+        <div class="note">
+            <strong>Asset Indexing:</strong> Summit team must establish asset taxonomy (type, tags, verticals) before agent launch. Recommend starting with 20–30 core cloud-transformation assets.
+        </div>
+
+        <div class="note">
+            <strong>Pattern Library:</strong> Build pattern models in Summit as queryable objects, not static docs. Include suitability scores for rapid constraint matching.
+        </div>
+
+        <div class="warning">
+            <strong>Security:</strong> Mark sensitive assets (internal pricing, IP) with <code>reusability: restricted</code>. Agent respects exclusion lists passed in trigger request.
+        </div>
+
+        <div class="note">
+            <strong>Versioning:</strong> Track asset versions in Summit. Playbook generation should capture asset version IDs in source attribution for auditability.
+        </div>
+
+        <div class="note">
+            <strong>Rate Limiting:</strong> Set Summit API rate limits for agent searches (suggest 100 RPS burst, 50 RPS sustained). Agent job queue prevents overload.
+        </div>
+
+        <h2>🚀 Deployment Roadmap</h2>
+
+        <div style="background: #162b45; padding: 20px; border-radius: 6px; margin: 15px 0;">
+            <strong style="color: #00ff88; display: block; margin-bottom: 15px;">Week 1–2: API & Schema Setup</strong>
+            <ul>
+                <li>Implement REST endpoints (trigger, status, artifacts)</li>
+                <li>Create database tables (jobs, attribution)</li>
+                <li>Build Summit search integration</li>
+            </ul>
+        </div>
+
+        <div style="background: #162b45; padding: 20px; border-radius: 6px; margin: 15px 0;">
+            <strong style="color: #00ff88; display: block; margin-bottom: 15px;">Week 3–4: Pattern Library & Agent</strong>
+            <ul>
+                <li>Load initial pattern library into Summit</li>
+                <li>Index 25+ cloud-transformation assets</li>
+                <li>Connect Claude agent to Summit API</li>
+                <li>Test end-to-end workflow</li>
+            </ul>
+        </div>
+
+        <div style="background: #162b45; padding: 20px; border-radius: 6px; margin: 15px 0;">
+            <strong style="color: #00ff88; display: block; margin-bottom: 15px;">Week 5–6: Quality Gates & Launch</strong>
+            <ul>
+                <li>Implement 10-point quality checklist</li>
+                <li>Pilot with 3 real engagements</li>
+                <li>Measure velocity lift</li>
+                <li>Launch to PMO & delivery teams</li>
+            </ul>
+        </div>
+
+        <footer>
+            <p>SPARK Agent Summit Integration Spec • Technical Reference for Engineering Team</p>
+            <p>API v1 • Updated 2026-03-25</p>
+        </footer>
+    </div>
+</body>
+</html>
