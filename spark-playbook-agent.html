@@ -1,0 +1,771 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SPARK Agent: Cloud Transformation Playbook Assembler</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            color: #e0e0e0;
+            line-height: 1.6;
+            padding: 40px 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 60px;
+            border-bottom: 2px solid #00d4ff;
+            padding-bottom: 30px;
+        }
+
+        h1 {
+            font-size: 2.5em;
+            color: #00d4ff;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .subtitle {
+            font-size: 1.1em;
+            color: #b0b0b0;
+            font-weight: 300;
+        }
+
+        .spark-section {
+            background: linear-gradient(135deg, #0f3460 0%, #162b45 100%);
+            border-left: 4px solid #00d4ff;
+            padding: 30px;
+            margin-bottom: 40px;
+            border-radius: 8px;
+            box-shadow: 0 4px 20px rgba(0, 212, 255, 0.1);
+        }
+
+        .spark-letter {
+            display: inline-block;
+            background: #00d4ff;
+            color: #0f3460;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 40px;
+            font-weight: bold;
+            font-size: 1.2em;
+            margin-right: 15px;
+            vertical-align: middle;
+        }
+
+        .spark-title {
+            font-size: 1.4em;
+            color: #00d4ff;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+        }
+
+        .spark-content {
+            margin-left: 55px;
+            font-size: 1em;
+            color: #d0d0d0;
+            line-height: 1.8;
+        }
+
+        .spark-content strong {
+            color: #00d4ff;
+        }
+
+        .section {
+            margin-bottom: 50px;
+        }
+
+        .section-title {
+            font-size: 1.8em;
+            color: #00d4ff;
+            margin-bottom: 25px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            border-bottom: 2px solid #00d4ff;
+            padding-bottom: 15px;
+        }
+
+        .architecture {
+            background: #162b45;
+            padding: 25px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+            border: 1px solid #00d4ff;
+        }
+
+        .flow-box {
+            background: #0f3460;
+            border: 2px solid #00d4ff;
+            padding: 20px;
+            margin: 15px 0;
+            border-radius: 6px;
+            position: relative;
+        }
+
+        .flow-box.input {
+            border-left: 4px solid #00ff88;
+        }
+
+        .flow-box.process {
+            border-left: 4px solid #ffaa00;
+        }
+
+        .flow-box.output {
+            border-left: 4px solid #ff0055;
+        }
+
+        .flow-label {
+            font-size: 0.85em;
+            color: #00d4ff;
+            text-transform: uppercase;
+            margin-bottom: 8px;
+            font-weight: bold;
+        }
+
+        .arrow {
+            text-align: center;
+            color: #00d4ff;
+            font-size: 1.5em;
+            margin: 10px 0;
+        }
+
+        .capabilities {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .capability-card {
+            background: #0f3460;
+            border: 1px solid #00d4ff;
+            padding: 20px;
+            border-radius: 6px;
+            transition: all 0.3s ease;
+        }
+
+        .capability-card:hover {
+            background: #162b45;
+            box-shadow: 0 0 20px rgba(0, 212, 255, 0.2);
+        }
+
+        .capability-card h4 {
+            color: #00d4ff;
+            margin-bottom: 12px;
+            font-size: 1.1em;
+        }
+
+        .capability-card p {
+            color: #c0c0c0;
+            font-size: 0.95em;
+            line-height: 1.6;
+        }
+
+        .metric {
+            display: inline-block;
+            background: #00d4ff;
+            color: #0f3460;
+            padding: 8px 16px;
+            border-radius: 4px;
+            margin: 8px 8px 8px 0;
+            font-weight: bold;
+            font-size: 0.9em;
+        }
+
+        .checklist {
+            list-style: none;
+            padding: 0;
+        }
+
+        .checklist li {
+            padding: 10px 0;
+            padding-left: 30px;
+            position: relative;
+            color: #d0d0d0;
+        }
+
+        .checklist li:before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            color: #00ff88;
+            font-weight: bold;
+            font-size: 1.2em;
+        }
+
+        .integration-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .integration-box {
+            background: #0f3460;
+            border: 1px solid #00d4ff;
+            padding: 15px;
+            border-radius: 6px;
+            text-align: center;
+        }
+
+        .integration-box strong {
+            color: #00d4ff;
+            display: block;
+            margin-bottom: 8px;
+        }
+
+        .integration-box small {
+            color: #a0a0a0;
+            font-size: 0.9em;
+        }
+
+        code {
+            background: #0f3460;
+            border: 1px solid #00d4ff;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: "Monaco", "Courier New", monospace;
+            color: #00ff88;
+            font-size: 0.9em;
+        }
+
+        .roadmap {
+            background: #162b45;
+            padding: 25px;
+            border-radius: 8px;
+            border-left: 4px solid #ffaa00;
+        }
+
+        .roadmap-phase {
+            margin-bottom: 20px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #00d4ff;
+        }
+
+        .roadmap-phase:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+
+        .phase-title {
+            color: #ffaa00;
+            font-weight: bold;
+            font-size: 1.1em;
+            margin-bottom: 10px;
+        }
+
+        .phase-items {
+            margin-left: 20px;
+            color: #d0d0d0;
+        }
+
+        .phase-items li {
+            margin-bottom: 6px;
+        }
+
+        .success-metrics {
+            background: linear-gradient(135deg, #00ff88 0%, #00cc6a 100%);
+            color: #0f3460;
+            padding: 25px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+        }
+
+        .success-metrics h3 {
+            margin-bottom: 15px;
+            font-size: 1.3em;
+        }
+
+        .metric-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .metric-item {
+            background: rgba(0, 0, 0, 0.1);
+            padding: 15px;
+            border-radius: 6px;
+        }
+
+        .metric-item strong {
+            display: block;
+            margin-bottom: 5px;
+            font-size: 1.1em;
+        }
+
+        .metric-item small {
+            color: rgba(0, 0, 0, 0.7);
+        }
+
+        footer {
+            text-align: center;
+            color: #707070;
+            margin-top: 60px;
+            padding-top: 30px;
+            border-top: 1px solid #00d4ff;
+            font-size: 0.9em;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🚀 SPARK Agent Framework</h1>
+            <p class="subtitle">Cloud Transformation Playbook Assembler for Slalom Consulting</p>
+            <p class="subtitle" style="margin-top: 10px;">Days → Hours. Chaos → Canvas.</p>
+        </header>
+
+        <!-- SPARK FRAMEWORK -->
+        <div class="spark-section">
+            <div class="spark-title">
+                <span class="spark-letter">S</span>
+                <strong>SITUATION</strong>
+            </div>
+            <div class="spark-content">
+                Slalom lands a <strong>cloud transformation engagement with Canadian government agency</strong>. Playbook doesn't exist. Critical pieces live in Summit (knowledge platform), past project artifacts, SME presentations, methodologies, accelerators, and individual brains. Assembly takes <strong>multi-day scavenger hunt</strong>. Stakeholders demand faster time-to-first-draft. Review cycles compound delays. Quality inconsistent. Scope creeps because constraints aren't visible.
+            </div>
+        </div>
+
+        <div class="spark-section">
+            <div class="spark-title">
+                <span class="spark-letter">P</span>
+                <strong>PAIN / PROBLEM</strong>
+            </div>
+            <div class="spark-content">
+                <strong>The Core Pain:</strong> Assembling a client-ready playbook takes days because:
+                <ul style="margin-left: 20px; margin-top: 10px;">
+                    <li>Sources scattered across 3+ systems (Summit, repos, Google Drive, Slack)</li>
+                    <li>No traceability → sources lost, assumptions unclear</li>
+                    <li>Manual stitching → inconsistent structure, tone, quality bar</li>
+                    <li>Review cycles slow approval → sponsor fatigue</li>
+                    <li>Scope/time/margin constraints invisible → overruns happen</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="spark-section">
+            <div class="spark-title">
+                <span class="spark-letter">A</span>
+                <strong>ASK / CHALLENGE</strong>
+            </div>
+            <div class="spark-content">
+                <strong>How might we enable teams to assemble a client-ready playbook in 2–6 hours</strong> by:
+                <ul style="margin-left: 20px; margin-top: 10px;">
+                    <li>Combining Summit assets + approved external insights automatically</li>
+                    <li>Embedding traceable sources & assumptions in every output</li>
+                    <li>Applying consistent quality bar (tone, structure, clarity)</li>
+                    <li>Surfacing viable delivery patterns with explicit trade-offs</li>
+                    <li>Enabling faster sponsor approval through side-by-side comparison</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="spark-section">
+            <div class="spark-title">
+                <span class="spark-letter">R</span>
+                <strong>RESPONSE / SOLUTION</strong>
+            </div>
+            <div class="spark-content">
+                <strong>The SPARK Agent:</strong> An AI-driven orchestrator that:
+                <ol style="margin-left: 20px; margin-top: 10px;">
+                    <li>Ingests engagement parameters (client, vertical, scope, constraints)</li>
+                    <li>Searches Summit + external sources in parallel</li>
+                    <li>Synthesizes patterns, methods, and assets into structured templates</li>
+                    <li>Generates multiple delivery options with trade-off matrices</li>
+                    <li>Outputs client-ready playbook with embedded sources, assumptions, and governance</li>
+                    <li>Produces comparison deck for stakeholder alignment</li>
+                </ol>
+                <br/>
+                <strong>Output:</strong> Playbook + trade-off analysis + source attribution + review checklist—all within 2–6 hours.
+            </div>
+        </div>
+
+        <div class="spark-section">
+            <div class="spark-title">
+                <span class="spark-letter">K</span>
+                <strong>KEY ACTIONS / KICKOFF</strong>
+            </div>
+            <div class="spark-content">
+                <strong>Phase 1 (Week 1–2):</strong> Agent framework & Summit integration<br/>
+                <strong>Phase 2 (Week 3–4):</strong> Template library + quality gates<br/>
+                <strong>Phase 3 (Week 5+):</strong> Launch pilot, measure velocity lift<br/>
+            </div>
+        </div>
+
+        <!-- AGENT ARCHITECTURE -->
+        <div class="section">
+            <h2 class="section-title">Agent Architecture</h2>
+
+            <div class="architecture">
+                <h3 style="color: #00d4ff; margin-bottom: 20px;">Core Workflow</h3>
+
+                <div class="flow-box input">
+                    <div class="flow-label">INPUT</div>
+                    <strong>Engagement Context</strong><br/>
+                    Client name • Vertical • Scope • Constraints • Timeline • Budget • Stakeholders
+                </div>
+
+                <div class="arrow">↓</div>
+
+                <div class="flow-box process">
+                    <div class="flow-label">AGENTIC LAYER 1: RETRIEVAL</div>
+                    <strong>Parallel Search & Synthesis</strong><br/>
+                    • Summit asset search (methodologies, accelerators, past playbooks)<br/>
+                    • External pattern library (frameworks, templates)<br/>
+                    • SME context enrichment (constraints, dependencies)<br/>
+                    → Unified source graph with traceability
+                </div>
+
+                <div class="arrow">↓</div>
+
+                <div class="flow-box process">
+                    <div class="flow-label">AGENTIC LAYER 2: SYNTHESIS</div>
+                    <strong>Pattern Recognition & Template Selection</strong><br/>
+                    • Identify delivery patterns (phased, agile, hybrid, scaled)<br/>
+                    • Match engagement constraints to each pattern<br/>
+                    • Extract decision criteria (scope, time, margin, risk)<br/>
+                    → Pattern comparison matrix
+                </div>
+
+                <div class="arrow">↓</div>
+
+                <div class="flow-box process">
+                    <div class="flow-label">AGENTIC LAYER 3: COMPOSITION</div>
+                    <strong>Playbook Assembly & Quality Gate</strong><br/>
+                    • Assemble playbook from selected pattern<br/>
+                    • Embed assumptions, constraints, decision gates<br/>
+                    • Apply tone/structure standards (writing-style-guide)<br/>
+                    • Quality checklist: completeness, clarity, traceability<br/>
+                    → Client-ready playbook + source attribution
+                </div>
+
+                <div class="arrow">↓</div>
+
+                <div class="flow-box process">
+                    <div class="flow-label">AGENTIC LAYER 4: COMPARISON</div>
+                    <strong>Trade-off Analysis & Alignment Deck</strong><br/>
+                    • Generate side-by-side pattern comparison<br/>
+                    • Highlight risks, assumptions, dependencies<br/>
+                    • Build sponsor alignment deck (scope/time/margin)<br/>
+                    → Decision-ready deck + playbook bundle
+                </div>
+
+                <div class="arrow">↓</div>
+
+                <div class="flow-box output">
+                    <div class="flow-label">OUTPUT</div>
+                    <strong>Playbook Bundle</strong><br/>
+                    ✓ Client playbook (methods, milestones, roles)<br/>
+                    ✓ Pattern comparison matrix<br/>
+                    ✓ Assumptions & constraints document<br/>
+                    ✓ Source attribution & traceability log<br/>
+                    ✓ Sponsor alignment deck<br/>
+                    ✓ Quality review checklist
+                </div>
+            </div>
+        </div>
+
+        <!-- CORE CAPABILITIES -->
+        <div class="section">
+            <h2 class="section-title">Core Capabilities</h2>
+
+            <div class="capabilities">
+                <div class="capability-card">
+                    <h4>🔍 Summit Asset Retrieval</h4>
+                    <p>Search, index, and retrieve playbooks, methodologies, accelerators, templates, and past engagement assets from Slalom's knowledge platform.</p>
+                </div>
+
+                <div class="capability-card">
+                    <h4>📚 Pattern Library</h4>
+                    <p>Curated library of cloud transformation delivery patterns (Phased, Agile, Hybrid, Scaled) with decision trees and cost models.</p>
+                </div>
+
+                <div class="capability-card">
+                    <h4>🎯 Constraint Mapping</h4>
+                    <p>Automatically map engagement scope, timeline, budget, risk tolerance to viable delivery patterns with trade-off visibility.</p>
+                </div>
+
+                <div class="capability-card">
+                    <h4>🧩 Template Composition</h4>
+                    <p>Assemble playbook structure from modular components (phases, activities, roles, risks, decision gates) with consistent tone.</p>
+                </div>
+
+                <div class="capability-card">
+                    <h4>📊 Trade-off Analysis</h4>
+                    <p>Generate multi-dimensional comparison matrices (scope vs. time vs. margin) with risk visualization and decision criteria.</p>
+                </div>
+
+                <div class="capability-card">
+                    <h4>🏷️ Source Attribution</h4>
+                    <p>Embed traceable source links, assumes, and decision rationale in every output section. No orphaned content.</p>
+                </div>
+
+                <div class="capability-card">
+                    <h4>✅ Quality Gates</h4>
+                    <p>Automated checklist: clarity, completeness, traceability, tone consistency, assumption visibility, risk coverage.</p>
+                </div>
+
+                <div class="capability-card">
+                    <h4>📑 Alignment Deck Gen</h4>
+                    <p>Produce sponsor-ready presentation: side-by-side pattern comparison, recommendations, risks, approval gates.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- SUCCESS METRICS -->
+        <div class="success-metrics">
+            <h3>🎯 Success Metrics</h3>
+            <div class="metric-row">
+                <div class="metric-item">
+                    <strong>Timeline</strong>
+                    <small>First playbook draft: 2–6 hours (vs. 2–4 days)</small>
+                </div>
+                <div class="metric-item">
+                    <strong>Review Cycles</strong>
+                    <small>Fewer cycles due to embedded assumptions & trade-offs</small>
+                </div>
+            </div>
+            <div class="metric-row">
+                <div class="metric-item">
+                    <strong>Traceability</strong>
+                    <small>100% of content sources cited; zero orphaned assumptions</small>
+                </div>
+                <div class="metric-item">
+                    <strong>Quality Bar</strong>
+                    <small>Consistent tone, structure, and clarity across all playbooks</small>
+                </div>
+            </div>
+            <div class="metric-row">
+                <div class="metric-item">
+                    <strong>Sponsor Approval</strong>
+                    <small>Faster decision-making via side-by-side trade-off visibility</small>
+                </div>
+                <div class="metric-item">
+                    <strong>Scope Protection</strong>
+                    <small>Constraints & margin visible upfront; fewer scope creeps</small>
+                </div>
+            </div>
+        </div>
+
+        <!-- INTEGRATIONS -->
+        <div class="section">
+            <h2 class="section-title">Integration Points</h2>
+
+            <div class="integration-grid">
+                <div class="integration-box">
+                    <strong>Summit</strong>
+                    <small>Asset retrieval, methodology search, past playbook indexing</small>
+                </div>
+                <div class="integration-box">
+                    <strong>GitHub</strong>
+                    <small>Public methodologies, code templates, accelerators</small>
+                </div>
+                <div class="integration-box">
+                    <strong>Google Drive</strong>
+                    <small>Project artifacts, templates, case studies, enablement decks</small>
+                </div>
+                <div class="integration-box">
+                    <strong>Notion</strong>
+                    <small>SME notes, patterns, lessons learned, risk libraries</small>
+                </div>
+                <div class="integration-box">
+                    <strong>Claude API</strong>
+                    <small>Orchestration, synthesis, composition, quality gates</small>
+                </div>
+                <div class="integration-box">
+                    <strong>Slack</strong>
+                    <small>Trigger playbook request, real-time status, output notifications</small>
+                </div>
+            </div>
+        </div>
+
+        <!-- QUALITY GATES -->
+        <div class="section">
+            <h2 class="section-title">Quality Gates & Checklist</h2>
+
+            <ul class="checklist">
+                <li><strong>Clarity:</strong> All text passes readability test (Flesch-Kincaid 8–10)</li>
+                <li><strong>Completeness:</strong> All playbook sections populated per template</li>
+                <li><strong>Traceability:</strong> Every fact, method, assumption has source link or caveat</li>
+                <li><strong>Tone:</strong> Voice matches style guide (professional, direct, jargon-aware)</li>
+                <li><strong>Assumptions:</strong> All assumptions explicitly listed with impact/mitigation</li>
+                <li><strong>Risk Coverage:</strong> Top 10 risks identified with mitigation strategies</li>
+                <li><strong>Decision Visibility:</strong> All gates, milestones, constraints clearly marked</li>
+                <li><strong>Format Consistency:</strong> Headings, lists, tables follow template structure</li>
+                <li><strong>Actionability:</strong> Each phase includes clear next steps and ownership</li>
+                <li><strong>Review Readiness:</strong> Passes sponsor deck checklist (no orphaned slides)</li>
+            </ul>
+        </div>
+
+        <!-- IMPLEMENTATION ROADMAP -->
+        <div class="section">
+            <h2 class="section-title">Implementation Roadmap</h2>
+
+            <div class="roadmap">
+                <div class="roadmap-phase">
+                    <div class="phase-title">Phase 1: Foundation (Week 1–2)</div>
+                    <ul class="phase-items">
+                        <li>✓ Define SPARK framework & agent layers</li>
+                        <li>✓ Build Summit API integration for asset search</li>
+                        <li>✓ Create pattern library (4 core delivery models)</li>
+                        <li>✓ Design playbook template structure</li>
+                        <li>✓ Set up Claude API orchestration</li>
+                    </ul>
+                </div>
+
+                <div class="roadmap-phase">
+                    <div class="phase-title">Phase 2: Intelligence (Week 3–4)</div>
+                    <ul class="phase-items">
+                        <li>✓ Build constraint-to-pattern matching logic</li>
+                        <li>✓ Implement trade-off analysis engine</li>
+                        <li>✓ Create source attribution system</li>
+                        <li>✓ Build quality gate checklist</li>
+                        <li>✓ Design alignment deck generator</li>
+                    </ul>
+                </div>
+
+                <div class="roadmap-phase">
+                    <div class="phase-title">Phase 3: Execution (Week 5–6)</div>
+                    <ul class="phase-items">
+                        <li>✓ Pilot with 2–3 live engagements</li>
+                        <li>✓ Measure velocity lift (days → hours)</li>
+                        <li>✓ Iterate based on feedback</li>
+                        <li>✓ Document playbook assembly playbook 🎯</li>
+                        <li>✓ Train PMO, delivery teams on agent usage</li>
+                    </ul>
+                </div>
+
+                <div class="roadmap-phase">
+                    <div class="phase-title">Phase 4: Scale (Week 7+)</div>
+                    <ul class="phase-items">
+                        <li>✓ Expand pattern library (cloud, data, security, AI verticals)</li>
+                        <li>✓ Build Slack integration for workflow automation</li>
+                        <li>✓ Create self-service playbook request form</li>
+                        <li>✓ Set up continuous improvement feedback loop</li>
+                        <li>✓ Measure impact on delivery velocity & quality</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- SAMPLE OUTPUT STRUCTURE -->
+        <div class="section">
+            <h2 class="section-title">Sample Output Structure</h2>
+
+            <div class="architecture">
+                <h3 style="color: #00d4ff; margin-bottom: 20px;">Playbook Bundle Contents</h3>
+
+                <div style="background: #0f3460; padding: 15px; border-radius: 6px; margin-bottom: 15px;">
+                    <strong>1. Client Playbook (15–30 pages)</strong>
+                    <ul style="margin-left: 20px; margin-top: 10px; color: #d0d0d0;">
+                        <li>Executive Summary (why, what, how)</li>
+                        <li>Delivery Model Overview (selected pattern + rationale)</li>
+                        <li>Phased Roadmap (phases, milestones, gating decisions)</li>
+                        <li>Roles, Responsibilities, RACI</li>
+                        <li>Technical Architecture (if applicable)</li>
+                        <li>Risk Register + Mitigation</li>
+                        <li>Success Criteria & KPIs</li>
+                        <li>Assumptions & Constraints (with sources)</li>
+                    </ul>
+                </div>
+
+                <div style="background: #0f3460; padding: 15px; border-radius: 6px; margin-bottom: 15px;">
+                    <strong>2. Pattern Comparison Matrix</strong>
+                    <ul style="margin-left: 20px; margin-top: 10px; color: #d0d0d0;">
+                        <li>Side-by-side delivery models (Phased vs. Agile vs. Hybrid)</li>
+                        <li>Scope / Time / Margin trade-offs</li>
+                        <li>Risk & complexity profiles</li>
+                        <li>Cost ranges per pattern</li>
+                        <li>Suitability for client maturity level</li>
+                    </ul>
+                </div>
+
+                <div style="background: #0f3460; padding: 15px; border-radius: 6px; margin-bottom: 15px;">
+                    <strong>3. Source Attribution Log</strong>
+                    <ul style="margin-left: 20px; margin-top: 10px; color: #d0d0d0;">
+                        <li>Methodology references (Summit link + version)</li>
+                        <li>Accelerator sources (link + reuse terms)</li>
+                        <li>Past engagement lessons learned</li>
+                        <li>External frameworks cited (with permission)</li>
+                        <li>SME context inputs (with sign-off)</li>
+                    </ul>
+                </div>
+
+                <div style="background: #0f3460; padding: 15px; border-radius: 6px;">
+                    <strong>4. Sponsor Alignment Deck (5–7 slides)</strong>
+                    <ul style="margin-left: 20px; margin-top: 10px; color: #d0d0d0;">
+                        <li>Engagement Overview + Success Definition</li>
+                        <li>Recommended Pattern + Why</li>
+                        <li>Trade-off Comparison (1-pager)</li>
+                        <li>Key Risks & Mitigations</li>
+                        <li>Timeline + Gating Decisions</li>
+                        <li>Q&A + Approval Gates</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- KEY PRINCIPLES -->
+        <div class="section">
+            <h2 class="section-title">Key Design Principles</h2>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                <div class="spark-section">
+                    <strong style="color: #00d4ff; display: block; margin-bottom: 12px;">🎯 North Star</strong>
+                    <p>2–6 hours from trigger to client-ready playbook, with zero quality loss and 100% traceability.</p>
+                </div>
+
+                <div class="spark-section">
+                    <strong style="color: #00d4ff; display: block; margin-bottom: 12px;">🔗 Traceability First</strong>
+                    <p>Every fact, method, assumption has a source. Orphaned content = rejected by quality gate.</p>
+                </div>
+
+                <div class="spark-section">
+                    <strong style="color: #00d4ff; display: block; margin-bottom: 12px;">💡 Pattern Over Custom</strong>
+                    <p>Reuse proven delivery patterns; customize within guardrails, not from scratch.</p>
+                </div>
+
+                <div class="spark-section">
+                    <strong style="color: #00d4ff; display: block; margin-bottom: 12px;">⚖️ Trade-offs Visible</strong>
+                    <p>Show scope/time/margin/risk in side-by-side format. No hidden assumptions.</p>
+                </div>
+
+                <div class="spark-section">
+                    <strong style="color: #00d4ff; display: block; margin-bottom: 12px;">✨ Quality Gate Everything</strong>
+                    <p>10-point checklist applied to every playbook. Quality non-negotiable.</p>
+                </div>
+
+                <div class="spark-section">
+                    <strong style="color: #00d4ff; display: block; margin-bottom: 12px;">🤝 Sponsor Alignment</strong>
+                    <p>Alignment deck built simultaneously. Faster approval, fewer revision cycles.</p>
+                </div>
+            </div>
+        </div>
+
+        <footer>
+            <p>SPARK Agent Framework • Slalom Consulting • Cloud Transformation Playbook Assembler</p>
+            <p>Built for speed, quality, and traceability. Days → Hours. 🚀</p>
+        </footer>
+    </div>
+</body>
+</html>
